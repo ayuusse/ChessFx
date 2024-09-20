@@ -9,7 +9,7 @@ public class Board {
         this.isFirstMove = isFirstMove;
         this.CantMove = CantMove;
     }
-    String Name(){
+    String getName(){
         return Name;
     }
     Boolean isWhitePiece(){
