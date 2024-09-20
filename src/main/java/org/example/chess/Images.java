@@ -19,5 +19,7 @@ public class Images {
     Image wKn = new Image(new File(ImgFolder+"wKn.png").toURI().toString());
     Image bB = new Image(new File(ImgFolder+"bB.png").toURI().toString());
     Image wB = new Image(new File(ImgFolder+"wB.png").toURI().toString());
+    Image Move = new Image(new File(ImgFolder+"Move.png").toURI().toString());
+    Image Kill = new Image(new File(ImgFolder+"Kill.png").toURI().toString());
     Image Board = new Image(new File(ImgFolder+"maple.jpg").toURI().toString());
 }

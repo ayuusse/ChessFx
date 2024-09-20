@@ -9,15 +9,23 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/*
+        Hi, Thankyou for reading this  (´▽`ʃ♡ƪ)
+        Btw i am not very good at writing comments as you can see.
+ */
 public class Main extends Application {
     Images Image = new Images();
-    Board[][] Board = new Board[8][8];
+    Board[][] Board = new Board[8][8]; //The main array
 
     AnchorPane Pane = new AnchorPane();
-    ImageView[][] Pices = new ImageView[8][8];
+    ImageView[][] Pices = new ImageView[8][8];//Image array to show the image of Pieces
+    ImageView[][] MoveKill = new ImageView[8][8];//Image array that shows the images of places the pieces can move and whom they can kill
 
     @Override
     public void start(Stage stage) throws IOException {
+         /*
+            Start method
+         */
         Scene scene = new Scene(Pane, 800, 800);
         Initalize();
         stage.setTitle("Chess!");
@@ -26,11 +34,29 @@ public class Main extends Application {
     }
 
     private void Initalize() {
+         /*
+            Just a method to keep things organaized
+         */
         SetBoard();
+        SetMoveKillnull();
         SyncBoard();
     }
 
+    private void SetMoveKillnull() {
+        /*
+            Sets the images of MoveKill to null
+         */
+        for (int i = 0; i < MoveKill.length; i++) {
+            for (int j = 0; j < MoveKill[0].length; j++) {
+                MoveKill[i][j].setImage(null);
+            }
+        }
+    }
+
     private void SyncBoard() {
+        /*
+            This method syncs the Board Array and the Pieces Array
+         */
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null) continue;
@@ -48,10 +74,16 @@ public class Main extends Application {
     }
 
     private void SetBoard() {
+        /*
+            Setting Up the Board
+         */
+
+        //Adding the Background image of the Chess Board
         ImageView BoardImg = new ImageView(Image.Board);
         BoardImg.toBack();
         Pane.getChildren().addAll(BoardImg);
 
+        //Just Setting up the Pices array
         for (int i = 0; i < Pices.length; i++) {
             for (int j = 0; j < Pices[0].length; j++) {
                 Pices[i][j] = new ImageView();
@@ -61,6 +93,17 @@ public class Main extends Application {
             }
         }
 
+        //Doing the same thing in two different Loops. Why idk
+        for (int i = 0; i < MoveKill.length; i++) {
+            for (int j = 0; j < MoveKill[0].length; j++) {
+                MoveKill[i][j] = new ImageView();
+                MoveKill[i][j].setX(j*100);
+                MoveKill[i][j].setY(i*100);
+                Pane.getChildren().add(MoveKill[i][j]);
+            }
+        }
+
+        //Placing the Pices at the correct place
         Board[0][0] = new Board("Rook",false,true,false);
         Board[0][1] = new Board("Knight",false,true,false);
         Board[0][2] = new Board("Bishop",false,true,false);
