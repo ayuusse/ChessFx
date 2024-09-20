@@ -8,6 +8,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
         Hi, Thankyou for reading this  (´▽`ʃ♡ƪ)
@@ -21,6 +23,9 @@ public class Main extends Application {
     ImageView[][] Pices = new ImageView[8][8];//Image array to show the image of Pieces
     ImageView[][] MoveKill = new ImageView[8][8];//Image array that shows the images of places the pieces can move and whom they can kill
 
+    ArrayList<String> Movable = new ArrayList<>();//Storees all the valid moves
+    ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
+
     @Override
     public void start(Stage stage) throws IOException {
          /*
@@ -28,6 +33,24 @@ public class Main extends Application {
          */
         Scene scene = new Scene(Pane, 800, 800);
         Initalize();
+
+        scene.setOnMouseClicked(event ->{
+            int x =(int)event.getSceneY()/100; // Its inverted i know but it works
+            int y =(int)event.getSceneX()/100;
+            if(Board[x][y].Name == null) return;
+
+
+        });
+
+
+
+
+
+
+
+
+
+
         stage.setTitle("Chess!");
         stage.setScene(scene);
         stage.show();
