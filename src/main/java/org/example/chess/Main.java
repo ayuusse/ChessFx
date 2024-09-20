@@ -28,7 +28,6 @@ public class Main extends Application {
     private void Initalize() {
         SetBoard();
         SyncBoard();
-        System.out.println("new Changes i want to test Agoin1");
     }
 
     private void SyncBoard() {
