@@ -37,7 +37,7 @@ public class Main extends Application {
         scene.setOnMouseClicked(event ->{
             int x =(int)event.getSceneY()/100; // Its inverted i know but it works
             int y =(int)event.getSceneX()/100;
-            if(Board[x][y].Name == null) return;
+            if(Board[x][y] == null) return;
 
 
         });

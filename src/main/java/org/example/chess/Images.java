@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import java.io.File;
 
 public class Images {
-    String  ImgFolder = "C:\\Users\\ss\\IdeaProjects\\Chess\\src\\main\\resources\\Images\\";
+    String  ImgFolder = "src\\main\\resources\\Images\\";
     Image bR = new Image(new File(ImgFolder+"bR.png").toURI().toString());
     Image wR = new Image(new File(ImgFolder+"wR.png").toURI().toString());
     Image bQ = new Image(new File(ImgFolder+"bQ.png").toURI().toString());
