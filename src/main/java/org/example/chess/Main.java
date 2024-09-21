@@ -2,33 +2,29 @@ package org.example.chess;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /*
-        Hi, Thankyou for reading this  (´▽`ʃ♡ƪ)
-        Btw i am not very good at writing comments as you can see.
+        Hi, Thank you for reading this  (´▽`ʃ♡ƪ)
+        Btw I am not very good at writing comments as you can see.
  */
 public class Main extends Application {
     Images Image = new Images();
-    Move Move = new Move();
-    Board[][] Board = new Board[8][8]; //The main array
+    static  Board[][] Board = new Board[8][8]; //The main array
 
     AnchorPane Pane = new AnchorPane();
     ImageView[][] Pices = new ImageView[8][8];//Image array to show the image of Pieces
     ImageView[][] MoveKill = new ImageView[8][8];//Image array that shows the images of places the pieces can move and whom they can kill
 
-    ArrayList<String> Movable = new ArrayList<>();//Storees all the valid moves
-    ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
+    static ArrayList<String> Movable = new ArrayList<>();//Stores all the valid moves
+    static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
          /*
             Start method
          */
@@ -36,21 +32,14 @@ public class Main extends Application {
         Initalize();
 
         scene.setOnMouseClicked(event ->{
-            int x =(int)event.getSceneY()/100; // Its inverted i know but it works
+            int x =(int)event.getSceneY()/100; // Its inverted I know but it works
             int y =(int)event.getSceneX()/100;
-            if(Board[x][y] == null) return;
+            if(Board[x][y] == null){
+                SetMoveKillnull();
+                return;
+            }
             setMovement(x,y);
-
         });
-
-
-
-
-
-
-
-
-
 
         stage.setTitle("Chess!");
         stage.setScene(scene);
@@ -59,7 +48,9 @@ public class Main extends Application {
 
     private void setMovement(int x, int y) {
         Movable = new ArrayList<>();
+        Killable = new ArrayList<>();
         SetMoveKillnull();
+        Move Move = new Move();
         switch ((Board[x][y].Name).substring(0,3)){
             case "Roo" ->  Move.Rook(x,y);
             case "Bis" ->  Move.Bishop(x,y);
@@ -155,7 +146,7 @@ public class Main extends Application {
         Board[4][4] = new Board("Rook",false,true,false);
         Board[0][1] = new Board("Knight",false,true,false);
         Board[0][2] = new Board("Bishop",false,true,false);
-        Board[0][3] = new Board("Queen",false,true,false);
+        Board[3][3] = new Board("Queen",false,true,false);
         Board[0][4] = new Board("King",false,true,false);
         Board[0][5] = new Board("Bishop",false,true,false);
         Board[0][6] = new Board("Knight",false,true,false);
@@ -172,7 +163,7 @@ public class Main extends Application {
         Board[7][0] = new Board("Rook",true,true,false);
         Board[7][1] = new Board("Knight",true,true,false);
         Board[7][2] = new Board("Bishop",true,true,false);
-        Board[7][3] = new Board("Queen",true,true,false);
+        Board[4][7] = new Board("Queen",true,true,false);
         Board[7][4] = new Board("King",true,true,false);
         Board[4][5] = new Board("Bishop",true,true,false);
         Board[7][6] = new Board("Knight",true,true,false);
@@ -185,6 +176,7 @@ public class Main extends Application {
         Board[6][5] = new Board("Pawn",true,true,false);
         Board[6][6] = new Board("Pawn",true,true,false);
         Board[6][7] = new Board("Pawn",true,true,false);
+        System.out.println("Board set to Default");
     }
 
 
