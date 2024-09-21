@@ -44,6 +44,7 @@ public class Main extends Application {
         stage.setTitle("Chess!");
         stage.setScene(scene);
         stage.show();
+
     }
 
     private void setMovement(int x, int y) {
