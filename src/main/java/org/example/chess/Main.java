@@ -17,6 +17,7 @@ import java.util.Arrays;
  */
 public class Main extends Application {
     Images Image = new Images();
+    Move Move = new Move();
     Board[][] Board = new Board[8][8]; //The main array
 
     AnchorPane Pane = new AnchorPane();
@@ -38,7 +39,7 @@ public class Main extends Application {
             int x =(int)event.getSceneY()/100; // Its inverted i know but it works
             int y =(int)event.getSceneX()/100;
             if(Board[x][y] == null) return;
-
+            setMovement(x,y);
 
         });
 
@@ -54,6 +55,30 @@ public class Main extends Application {
         stage.setTitle("Chess!");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void setMovement(int x, int y) {
+        Movable = new ArrayList<>();
+        SetMoveKillnull();
+        switch ((Board[x][y].Name).substring(0,3)){
+            case "Roo" ->  Move.Rook(x,y);
+            case "Bis" ->  Move.Bishop(x,y);
+            case "Que" ->  Move.Queen(x,y);
+            case "Paw" ->  Move.Pawn(x,y);
+            case "Kin" ->  Move.King(x,y);
+            case "Kni" ->  Move.Knight(x,y);
+            default -> System.out.println("Error When Getting Moves");
+        }
+        showMoves();
+    }
+
+    private void showMoves() {
+        for(String s : Movable){
+            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Move);
+        }
+        for(String s : Killable){
+            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Kill);
+        }
     }
 
     private void Initalize() {
@@ -127,7 +152,7 @@ public class Main extends Application {
         }
 
         //Placing the Pices at the correct place
-        Board[0][0] = new Board("Rook",false,true,false);
+        Board[4][4] = new Board("Rook",false,true,false);
         Board[0][1] = new Board("Knight",false,true,false);
         Board[0][2] = new Board("Bishop",false,true,false);
         Board[0][3] = new Board("Queen",false,true,false);
@@ -149,7 +174,7 @@ public class Main extends Application {
         Board[7][2] = new Board("Bishop",true,true,false);
         Board[7][3] = new Board("Queen",true,true,false);
         Board[7][4] = new Board("King",true,true,false);
-        Board[7][5] = new Board("Bishop",true,true,false);
+        Board[4][5] = new Board("Bishop",true,true,false);
         Board[7][6] = new Board("Knight",true,true,false);
         Board[7][7] = new Board("Rook",true,true,false);
         Board[6][0] = new Board("Pawn",true,true,false);
