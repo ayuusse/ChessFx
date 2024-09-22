@@ -23,6 +23,9 @@ public class Main extends Application {
     static ArrayList<String> Movable = new ArrayList<>();//Stores all the valid moves
     static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
 
+    int Oldx,Oldy;
+    boolean isPieceSelected = false;
+
     @Override
     public void start(Stage stage) {
          /*
@@ -34,17 +37,34 @@ public class Main extends Application {
         scene.setOnMouseClicked(event ->{
             int x =(int)event.getSceneY()/100; // Its inverted I know but it works
             int y =(int)event.getSceneX()/100;
-            if(Board[x][y] == null){
+            if(isPieceSelected){
+                if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
+                    MovePiece(x,y);
+                }
                 SetMoveKillnull();
-                return;
+                isPieceSelected = false;
+            }else{
+                if(Board[x][y] == null){
+                    SetMoveKillnull();
+                    return;
+                }
+                setMovement(x,y);
+                Oldx = x;
+                Oldy = y;
+                isPieceSelected = true;
             }
-            setMovement(x,y);
         });
 
         stage.setTitle("Chess!");
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    private void MovePiece(int x, int y) {
+        Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false,Board[Oldx][Oldy].CantMove);
+        Board[Oldx][Oldy] = null;
+        SyncBoard();
     }
 
     private void setMovement(int x, int y) {
@@ -97,6 +117,11 @@ public class Main extends Application {
         /*
             This method syncs the Board Array and the Pieces Array
          */
+        for (int i = 0; i < Pices.length; i++) {
+            for (int j = 0; j < Pices[0].length; j++) {
+                Pices[i][j].setImage(null);
+            }
+        }
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null) continue;

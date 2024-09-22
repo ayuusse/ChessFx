@@ -166,11 +166,10 @@ public class Move extends Main{
         int[] wxarr;int[] wyarr;
         if(Board[x][y].isWhitePiece){
             wxarr = new int[]{-1,-2,-1,-1};// White Pawn movement (upwards)
-            wyarr = new int[]{0,0,-1,1};// White Pawn can move one or two squares forward or capture diagonally
         }else{
             wxarr = new int[]{1,2,1,1};// Black Pawn movement (downwards)
-            wyarr = new int[]{0,0,-1,1};// Black Pawn can move one or two squares forward or capture diagonally
         }
+        wyarr = new int[]{0,0,-1,1};// Pawns can capture diagonally
 
         // Loop through all possible movement offsets for the Pawn
         for(int i=0;i<wxarr.length;i++){
