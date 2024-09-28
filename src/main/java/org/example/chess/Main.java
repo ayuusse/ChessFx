@@ -171,8 +171,8 @@ public class Main extends Application {
         }
 
         //Placing the Pices at the correct place
-        Board[5][0] = new Board("Rook",false,true,false);
-        Board[4][4] = new Board("Knight",false,true,false);
+        Board[0][0] = new Board("Rook",false,true,false);
+        Board[0][1] = new Board("Knight",false,true,false);
         Board[0][2] = new Board("Bishop",false,true,false);
         Board[0][3] = new Board("Queen",false,true,false);
         Board[0][4] = new Board("King",false,true,false);
@@ -182,7 +182,7 @@ public class Main extends Application {
         Board[1][0] = new Board("Pawn",false,true,false);
         Board[1][1] = new Board("Pawn",false,true,false);
         Board[1][2] = new Board("Pawn",false,true,false);
-        Board[4][3] = new Board("Pawn",false,true,false);
+        Board[1][3] = new Board("Pawn",false,true,false);
         Board[1][4] = new Board("Pawn",false,true,false);
         Board[1][5] = new Board("Pawn",false,true,false);
         Board[1][6] = new Board("Pawn",false,true,false);
@@ -190,9 +190,9 @@ public class Main extends Application {
 
         Board[7][0] = new Board("Rook",true,true,false);
         Board[7][1] = new Board("Knight",true,true,false);
-        Board[2][2] = new Board("Bishop",true,true,false);
+        Board[7][2] = new Board("Bishop",true,true,false);
         Board[7][3] = new Board("Queen",true,true,false);
-        Board[3][4] = new Board("King",true,true,false);
+        Board[7][4] = new Board("King",true,true,false);
         Board[7][5] = new Board("Bishop",true,true,false);
         Board[7][6] = new Board("Knight",true,true,false);
         Board[7][7] = new Board("Rook",true,true,false);
