@@ -37,28 +37,21 @@ public class Main extends Application {
         scene.setOnMouseClicked(event ->{
             int x =(int)event.getSceneY()/100; // Its inverted I know but it works
             int y =(int)event.getSceneX()/100;
-            if(isPieceSelected){
-                if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
-                    MovePiece(x,y);
-                }
+            if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
+                MovePiece(x,y);
                 Oldx = -1;
                 Oldy = -1;
                 SetMoveKillnull();
-                isPieceSelected = false;
-            }else{
-                if(Board[x][y] == null){
-                    SetMoveKillnull();
-                    return;
-                }
-                setMovement(x,y);
-                if(Movable.isEmpty() && Killable.isEmpty()){
-                    SetMoveKillnull();
-                    return;
-                }
-                Oldx = x;
-                Oldy = y;
-                isPieceSelected = true;
+                return;
             }
+            if(Board[x][y] == null){
+                SetMoveKillnull();
+                return;
+            }
+            setMovement(x,y);
+            Oldx = x;
+            Oldy = y;
+
         });
 
         stage.setTitle("Chess!");
