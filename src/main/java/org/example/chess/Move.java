@@ -1,5 +1,7 @@
 package org.example.chess;
 
+import java.util.HashSet;
+
 public class Move extends Main{
     boolean isInsideBoard(int x,int y){
         /*
@@ -137,21 +139,6 @@ public class Move extends Main{
             }
         }
     }
-    void King(int x, int y)
-    {
-        int[] xarr = new int[]{-1,-1,-1,0,0,1,1,1};
-        int[] yarr = new int[]{-1,0,1,-1,1,-1,0,1};
-        for (int i = 0; i < xarr.length; i++) {
-            int tx = x+xarr[i];
-            int ty = y+yarr[i];
-            if(!(isInsideBoard(tx,ty))) continue;
-            if(Board[tx][ty] == null){
-                Movable.add(tx+" "+ty);
-            } else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
-                Killable.add(tx + " " + ty);
-            }
-        }
-    }
     void Pawn(int x, int y)
     {
         /*
@@ -163,51 +150,27 @@ public class Move extends Main{
 
         // Arrays representing the movement vectors for the Pawn based on its color.
         // White Pawns move up the board, Black Pawns move down the board.
-        int[] wxarr;int[] wyarr;
+        int[] xarr;int[] yarr;
         if(Board[x][y].isWhitePiece){
-            wxarr = new int[]{-1,-2,-1,-1};// White Pawn movement (upwards)
+            xarr = new int[]{-1,-2,-1};// White Pawn movement (upwards)
         }else{
-            wxarr = new int[]{1,2,1,1};// Black Pawn movement (downwards)
+            xarr = new int[]{1,2,1};// Black Pawn movement (downwards)
         }
-        wyarr = new int[]{0,0,-1,1};// Pawns can capture diagonally
+        yarr = new int[]{0,0,-1,1};// Pawns can capture diagonally
 
-        // Loop through all possible movement offsets for the Pawn
-        for(int i=0;i<wxarr.length;i++){
-            int tx = x+wxarr[i];
-            int ty = y+wyarr[i];
-
-            // Skip if the new position (tx, ty) is out of bounds
-            if(!isInsideBoard(tx, ty)){continue;}
-
-            switch (i){
-
-                // Case 0: Single square move forward
-                case 0 ->{
-                    // If the destination square is empty, add it to the Movable list
-                    if(Board[tx][ty]==null){
-                        Movable.add(tx+" "+ty);
-                    }else{
-                        // Stop checking further in this direction if there is a piece blocking the path
-                        i=2;
-                    }
-                }
-
-                // Case 1: Two squares move forward (initial move only)
-                case 1 ->{
-                    // Add position to Movable list if the Pawn is on its first move and the destination is empty
-                    if(Board[x][y].isFirstMove && Board[tx][ty]==null){
-                        Movable.add(tx+" "+ty);
-                    }
-                }
-
-                // Cases 2 and 3: Diagonal capture moves
-                case 2, 3 ->{
-                    // If the destination square has an opponent's piece, add it to the Killable list
-                    if(Board[tx][ty]!=null && (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece)){
-                        Killable.add(tx+" "+ty);
-                    }
-                }
+        if(isInsideBoard(x+xarr[0],y+yarr[0]) && Board[x+xarr[0]][y+yarr[0]] == null){
+            Movable.add((x+xarr[0])+" "+(y+yarr[0]));
+            if(isInsideBoard(x+xarr[1],y+yarr[1]) && Board[x+xarr[1]][y+yarr[1]] == null && Board[x][y].isFirstMove){
+                Movable.add((x+xarr[1])+" "+(y+yarr[1]));
             }
         }
+
+        if(isInsideBoard(x+xarr[2],y+yarr[2]) && Board[x+xarr[2]][y+yarr[2]] != null && (Board[x+xarr[2]][y+yarr[2]].isWhitePiece != Board[x][y].isWhitePiece)){
+            Killable.add((x+xarr[2])+" "+(y+yarr[2]));
+        }
+        if(isInsideBoard(x+xarr[2],y+yarr[3]) && Board[x+xarr[2]][y+yarr[3]] != null && (Board[x+xarr[2]][y+yarr[3]].isWhitePiece != Board[x][y].isWhitePiece)) {
+            Killable.add((x+xarr[2])+" "+(y+yarr[3]));
+        }
+
     }
 }

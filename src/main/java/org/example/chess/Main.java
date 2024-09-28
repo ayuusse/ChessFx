@@ -41,6 +41,8 @@ public class Main extends Application {
                 if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
                     MovePiece(x,y);
                 }
+                Oldx = -1;
+                Oldy = -1;
                 SetMoveKillnull();
                 isPieceSelected = false;
             }else{
@@ -49,6 +51,10 @@ public class Main extends Application {
                     return;
                 }
                 setMovement(x,y);
+                if(Movable.isEmpty() && Killable.isEmpty()){
+                    SetMoveKillnull();
+                    return;
+                }
                 Oldx = x;
                 Oldy = y;
                 isPieceSelected = true;
@@ -72,12 +78,13 @@ public class Main extends Application {
         Killable = new ArrayList<>();
         SetMoveKillnull();
         Move Move = new Move();
+        KingMoves KingMoves = new KingMoves();
         switch ((Board[x][y].Name).substring(0,3)){
             case "Roo" ->  Move.Rook(x,y);
             case "Bis" ->  Move.Bishop(x,y);
             case "Que" ->  Move.Queen(x,y);
             case "Paw" ->  Move.Pawn(x,y);
-            case "Kin" ->  Move.King(x,y);
+            case "Kin" ->  KingMoves.Kingmove(x,y);
             case "Kni" ->  Move.Knight(x,y);
             default -> System.out.println("Error When Getting Moves");
         }
@@ -106,6 +113,8 @@ public class Main extends Application {
         /*
             Sets the images of MoveKill to null
          */
+        Movable = new ArrayList<>();
+        Killable = new ArrayList<>();
         for (int i = 0; i < MoveKill.length; i++) {
             for (int j = 0; j < MoveKill[0].length; j++) {
                 MoveKill[i][j].setImage(null);
