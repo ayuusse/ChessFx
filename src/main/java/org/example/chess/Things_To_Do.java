@@ -1,4 +1,5 @@
-//Alternating colour moves
+
+// Dragging
 
 //Castling
 //ENpasaant whyyyyy

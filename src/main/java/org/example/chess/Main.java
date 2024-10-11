@@ -24,7 +24,7 @@ public class Main extends Application {
     static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
 
     int Oldx,Oldy;
-    boolean isPieceSelected = false;
+    boolean isWhiteToMove = true;
 
     @Override
     public void start(Stage stage) {
@@ -48,6 +48,7 @@ public class Main extends Application {
                 SetMoveKillnull();
                 return;
             }
+            if(isWhiteToMove != Board[x][y].isWhitePiece) return;
             setMovement(x,y);
             Oldx = x;
             Oldy = y;
@@ -64,6 +65,7 @@ public class Main extends Application {
         Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false,Board[Oldx][Oldy].CantMove);
         Board[Oldx][Oldy] = null;
         SyncBoard();
+        isWhiteToMove = !isWhiteToMove;
     }
 
     private void setMovement(int x, int y) {
