@@ -24,8 +24,8 @@ public class Main extends Application {
     static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
 
     int Oldx,Oldy;
-    boolean isWhiteToMove = true;
-
+    boolean isWhiteToMove = true,isDragging = false;
+    ImageView Dragimg;
     @Override
     public void start(Stage stage) {
          /*
@@ -33,9 +33,36 @@ public class Main extends Application {
          */
         Scene scene = new Scene(Pane, 800, 800);
         Initalize();
-
+        scene.setOnMouseDragged(event ->{
+            if(isDragging) {
+                Dragimg.setX(event.getX()-50);
+                Dragimg.setY(event.getY()-50);
+            }
+            else {
+                int x =(int)event.getSceneY()/100;
+                int y =(int)event.getSceneX()/100;
+                if(Board[x][y] == null){
+                    SetMoveKillnull();
+                    return;
+                }
+                if(isWhiteToMove != Board[x][y].isWhitePiece) return;
+                setMovement(x,y);
+                Oldx = x;
+                Oldy = y;
+                Dragimg.setImage(Pices[x][y].getImage());
+                Pices[x][y].setImage(null);
+                Dragimg.setX(event.getX()-50);
+                Dragimg.setY(event.getY()-50);
+                isDragging = true;
+            }
+        });
+        scene.setOnMouseReleased(event ->{
+            Dragimg.setImage(null);
+            isDragging = false;
+            SyncBoard();
+        });
         scene.setOnMouseClicked(event ->{
-            int x =(int)event.getSceneY()/100; // Its inverted I know but it works
+            int x =(int)event.getSceneY()/100;
             int y =(int)event.getSceneX()/100;
             if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
                 MovePiece(x,y);
@@ -44,6 +71,7 @@ public class Main extends Application {
                 SetMoveKillnull();
                 return;
             }
+            if (x>7 || x<0 || y>7 || y<0) return;
             if(Board[x][y] == null){
                 SetMoveKillnull();
                 return;
@@ -52,7 +80,6 @@ public class Main extends Application {
             setMovement(x,y);
             Oldx = x;
             Oldy = y;
-
         });
 
         stage.setTitle("Chess!");
@@ -162,7 +189,6 @@ public class Main extends Application {
             }
         }
 
-        //Doing the same thing in two different Loops. Why idk
         for (int i = 0; i < MoveKill.length; i++) {
             for (int j = 0; j < MoveKill[0].length; j++) {
                 MoveKill[i][j] = new ImageView();
@@ -171,6 +197,9 @@ public class Main extends Application {
                 Pane.getChildren().add(MoveKill[i][j]);
             }
         }
+
+        Dragimg = new ImageView();
+        Pane.getChildren().addAll(Dragimg);
 
         //Placing the Pices at the correct place
         Board[0][0] = new Board("Rook",false,true,false);
