@@ -1,7 +1,11 @@
+/*
+        Castling
+        Enpasaant
+        Check
+        Checkmate
+        Timer
 
-//Castling
-//ENpasaant whyyyyy
 
-//Checkmate
+        Stockfish Maybe
+ */
 
-//Timer
