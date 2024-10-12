@@ -22,6 +22,43 @@ public class KingMoves extends Main {
                 Killable.add(tx + " " + ty);
             }
         }
+        //Castling code
+        if(Board[x][y].isFirstMove){
+            int X;
+            if(Board[x][y].isWhitePiece){
+                X = 7;
+             }else {
+                X = 0;
+            }
+            int[] Left = new int[]{3,2,1};
+            int[] Right = new int[]{6,5};
+            //Check if we can Castle to the left
+            if(Board[X][0].isFirstMove){
+                boolean canCastle = true;
+                for(int Y : Left){
+                    if (!(Board[X][Y] == null && !(KingAttackable.contains(X + " " + Y)))) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+                if(canCastle){
+                    Castling.add(X+" "+2);
+                }
+            }
+            //Check if we can Castle to the Right
+            if(Board[X][7].isFirstMove){
+                boolean canCastle = true;
+                for(int Y : Right){
+                    if (!(Board[X][Y] == null && !(KingAttackable.contains(X + " " + Y)))) {
+                        canCastle = false;
+                        break;
+                    }
+                }
+                if(canCastle){
+                    Castling.add(X+" "+6);
+                }
+            }
+        }
     }
 
     private void GetNonMovable(int x, int y) {

@@ -22,10 +22,13 @@ public class Main extends Application {
 
     static ArrayList<String> Movable = new ArrayList<>();//Stores all the valid moves
     static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
+    static ArrayList<String> Castling = new ArrayList<>();
+    static ArrayList<String> Enpassant = new ArrayList<>();
 
     int Oldx,Oldy;
     boolean isWhiteToMove = true,isDragging = false;
     ImageView Dragimg;
+
     @Override
     public void start(Stage stage) {
          /*
@@ -64,7 +67,7 @@ public class Main extends Application {
         scene.setOnMouseClicked(event ->{
             int x =(int)event.getSceneY()/100;
             int y =(int)event.getSceneX()/100;
-            if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)){
+            if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)||Castling.contains(x+" "+y)||Enpassant.contains(x+" "+y)){
                 MovePiece(x,y);
                 Oldx = -1;
                 Oldy = -1;
@@ -74,6 +77,7 @@ public class Main extends Application {
             if (x>7 || x<0 || y>7 || y<0) return;
             if(Board[x][y] == null){
                 SetMoveKillnull();
+                System.out.println("Clicked null");
                 return;
             }
             if(isWhiteToMove != Board[x][y].isWhitePiece) return;
@@ -89,8 +93,39 @@ public class Main extends Application {
     }
 
     private void MovePiece(int x, int y) {
-        Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false,Board[Oldx][Oldy].CantMove);
-        Board[Oldx][Oldy] = null;
+        if(Castling.contains(x+" "+y)){
+            switch (x+" "+y){
+                case "7 2"->{
+                    Board[7][3] =  new Board("Rook",true,false,false);
+                    Board[7][2] =  new Board("King",true,false,false);
+                    Board[7][0] =  null;
+                    Board[7][4] =  null;
+                }
+                case "7 6"->{
+                    Board[7][4] =  null;
+                    Board[7][7] =  null;
+                    Board[7][5] =  new Board("Rook",true,false,false);
+                    Board[7][6] =  new Board("King",true,false,false);
+                }
+                case "0 2"->{
+                    Board[0][3] =  new Board("Rook",false,false,false);
+                    Board[0][2] =  new Board("King",false,false,false);
+                    Board[0][0] =  null;
+                    Board[0][4] =  null;
+                }
+                case "0 6"->{
+                    Board[0][4] =  null;
+                    Board[0][7] =  null;
+                    Board[0][5] =  new Board("Rook",false,false,false);
+                    Board[0][6] =  new Board("King",false,false,false);
+                }
+            }
+        } else if (Enpassant.contains(x+" "+y)) {
+
+        }else{
+            Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false,Board[Oldx][Oldy].CantMove);
+            Board[Oldx][Oldy] = null;
+        }
         SyncBoard();
         isWhiteToMove = !isWhiteToMove;
     }
@@ -120,6 +155,12 @@ public class Main extends Application {
         for(String s : Killable){
             MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Kill);
         }
+        for(String s : Castling){
+            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Move);
+        }
+        for(String s : Enpassant){
+            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Kill);
+        }
     }
 
     private void Initalize() {
@@ -137,6 +178,8 @@ public class Main extends Application {
          */
         Movable = new ArrayList<>();
         Killable = new ArrayList<>();
+        Castling = new ArrayList<>();
+        Enpassant = new ArrayList<>();
         for (int i = 0; i < MoveKill.length; i++) {
             for (int j = 0; j < MoveKill[0].length; j++) {
                 MoveKill[i][j].setImage(null);
