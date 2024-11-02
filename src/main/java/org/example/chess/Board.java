@@ -2,12 +2,14 @@ package org.example.chess;
 
 public class Board {
     String Name;Boolean isWhitePiece;Boolean isFirstMove;Boolean CantMove;
+    Boolean EnPasant;
 
-    Board(String Name,Boolean isWhitePiece,Boolean isFirstMove,Boolean CantMove){
+    Board(String Name,Boolean isWhitePiece,Boolean isFirstMove){
         this.Name = Name;
         this.isWhitePiece = isWhitePiece;
         this.isFirstMove = isFirstMove;
-        this.CantMove = CantMove;
+        this.CantMove = false;
+        this.EnPasant = false;
     }
     String getName(){
         return Name;
@@ -19,4 +21,5 @@ public class Board {
         return CantMove;
     }
     Boolean getIsFirstMove(){return isFirstMove;}
+    Boolean Enpassant(){return EnPasant;}
 }

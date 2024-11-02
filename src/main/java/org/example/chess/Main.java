@@ -92,38 +92,58 @@ public class Main extends Application {
 
     }
 
+    int enpassant_x=-1,enpassant_y=-1;
     private void MovePiece(int x, int y) {
+        if(enpassant_x>-1 && enpassant_y>-1 && Board[enpassant_x][enpassant_y] != null)
+        {
+            Board[enpassant_x][enpassant_y].EnPasant = false;
+            enpassant_x = -1;enpassant_y = -1;
+        }
         if(Castling.contains(x+" "+y)){
             switch (x+" "+y){
                 case "7 2"->{
-                    Board[7][3] =  new Board("Rook",true,false,false);
-                    Board[7][2] =  new Board("King",true,false,false);
+                    Board[7][3] =  new Board("Rook",true,false);
+                    Board[7][2] =  new Board("King",true,false);
                     Board[7][0] =  null;
                     Board[7][4] =  null;
                 }
                 case "7 6"->{
                     Board[7][4] =  null;
                     Board[7][7] =  null;
-                    Board[7][5] =  new Board("Rook",true,false,false);
-                    Board[7][6] =  new Board("King",true,false,false);
+                    Board[7][5] =  new Board("Rook",true,false);
+                    Board[7][6] =  new Board("King",true,false);
                 }
                 case "0 2"->{
-                    Board[0][3] =  new Board("Rook",false,false,false);
-                    Board[0][2] =  new Board("King",false,false,false);
+                    Board[0][3] =  new Board("Rook",false,false);
+                    Board[0][2] =  new Board("King",false,false);
                     Board[0][0] =  null;
                     Board[0][4] =  null;
                 }
                 case "0 6"->{
                     Board[0][4] =  null;
                     Board[0][7] =  null;
-                    Board[0][5] =  new Board("Rook",false,false,false);
-                    Board[0][6] =  new Board("King",false,false,false);
+                    Board[0][5] =  new Board("Rook",false,false);
+                    Board[0][6] =  new Board("King",false,false);
                 }
             }
-        } else if (Enpassant.contains(x+" "+y)) {
+        }
+        else if (Enpassant.contains(x + " " + y)) {
+            Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false);
+            if(Board[Oldx][Oldy].isWhitePiece)
+                Board[x+1][y] = null;
+            else
+                Board[x-1][y] = null;
 
-        }else{
-            Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false,Board[Oldx][Oldy].CantMove);
+            Board[Oldx][Oldy] = null;
+        }
+        else if((Board[Oldx][Oldy].Name).equals("Pawn") && Math.abs(x-Oldx)==2){
+            Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false);
+            Board[x][y].EnPasant = true;
+            enpassant_x =x; enpassant_y=y;
+            Board[Oldx][Oldy] = null;
+        }
+        else{
+            Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false);
             Board[Oldx][Oldy] = null;
         }
         SyncBoard();
@@ -245,39 +265,39 @@ public class Main extends Application {
         Pane.getChildren().addAll(Dragimg);
 
         //Placing the Pices at the correct place
-        Board[0][0] = new Board("Rook",false,true,false);
-        Board[0][1] = new Board("Knight",false,true,false);
-        Board[0][2] = new Board("Bishop",false,true,false);
-        Board[0][3] = new Board("Queen",false,true,false);
-        Board[0][4] = new Board("King",false,true,false);
-        Board[0][5] = new Board("Bishop",false,true,false);
-        Board[0][6] = new Board("Knight",false,true,false);
-        Board[0][7] = new Board("Rook",false,true,false);
-        Board[1][0] = new Board("Pawn",false,true,false);
-        Board[1][1] = new Board("Pawn",false,true,false);
-        Board[1][2] = new Board("Pawn",false,true,false);
-        Board[1][3] = new Board("Pawn",false,true,false);
-        Board[1][4] = new Board("Pawn",false,true,false);
-        Board[1][5] = new Board("Pawn",false,true,false);
-        Board[1][6] = new Board("Pawn",false,true,false);
-        Board[1][7] = new Board("Pawn",false,true,false);
+        Board[0][0] = new Board("Rook",false,true);
+        Board[0][1] = new Board("Knight",false,true);
+        Board[0][2] = new Board("Bishop",false,true);
+        Board[0][3] = new Board("Queen",false,true);
+        Board[0][4] = new Board("King",false,true);
+        Board[0][5] = new Board("Bishop",false,true);
+        Board[0][6] = new Board("Knight",false,true);
+        Board[0][7] = new Board("Rook",false,true);
+        Board[1][0] = new Board("Pawn",false,true);
+        Board[1][1] = new Board("Pawn",false,true);
+        Board[1][2] = new Board("Pawn",false,true);
+        Board[1][3] = new Board("Pawn",false,true);
+        Board[1][4] = new Board("Pawn",false,true);
+        Board[1][5] = new Board("Pawn",false,true);
+        Board[1][6] = new Board("Pawn",false,true);
+        Board[1][7] = new Board("Pawn",false,true);
 
-        Board[7][0] = new Board("Rook",true,true,false);
-        Board[7][1] = new Board("Knight",true,true,false);
-        Board[7][2] = new Board("Bishop",true,true,false);
-        Board[7][3] = new Board("Queen",true,true,false);
-        Board[7][4] = new Board("King",true,true,false);
-        Board[7][5] = new Board("Bishop",true,true,false);
-        Board[7][6] = new Board("Knight",true,true,false);
-        Board[7][7] = new Board("Rook",true,true,false);
-        Board[6][0] = new Board("Pawn",true,true,false);
-        Board[6][1] = new Board("Pawn",true,true,false);
-        Board[6][2] = new Board("Pawn",true,true,false);
-        Board[6][3] = new Board("Pawn",true,true,false);
-        Board[6][4] = new Board("Pawn",true,true,false);
-        Board[6][5] = new Board("Pawn",true,true,false);
-        Board[6][6] = new Board("Pawn",true,true,false);
-        Board[6][7] = new Board("Pawn",true,true,false);
+        Board[7][0] = new Board("Rook",true,true);
+        Board[7][1] = new Board("Knight",true,true);
+        Board[7][2] = new Board("Bishop",true,true);
+        Board[7][3] = new Board("Queen",true,true);
+        Board[7][4] = new Board("King",true,true);
+        Board[7][5] = new Board("Bishop",true,true);
+        Board[7][6] = new Board("Knight",true,true);
+        Board[7][7] = new Board("Rook",true,true);
+        Board[6][0] = new Board("Pawn",true,true);
+        Board[6][1] = new Board("Pawn",true,true);
+        Board[6][2] = new Board("Pawn",true,true);
+        Board[6][3] = new Board("Pawn",true,true);
+        Board[6][4] = new Board("Pawn",true,true);
+        Board[6][5] = new Board("Pawn",true,true);
+        Board[6][6] = new Board("Pawn",true,true);
+        Board[6][7] = new Board("Pawn",true,true);
         System.out.println("Board set to Default");
     }
 

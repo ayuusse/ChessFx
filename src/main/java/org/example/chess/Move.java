@@ -110,30 +110,16 @@ public class Move extends Main{
 
     void Knight(int x, int y)
     {
-        /*
-       This function calculates the possible movements of a Knight at position (x, y) on a chess board.
-       The Knight moves in an "L" shape, so the movement offsets are pre-defined.
-        */
+        int[] xarr = new int[]{-1,1,-1,1,2,2,-2,-2};
+        int[] yarr = new int[]{-2,-2,2,2,-1,1,-1,1};
 
-        // Arrays representing the movement vectors for the Knight.
-        // The Knight moves either 2 squares in one direction and 1 square in a perpendicular direction.
-        int[] xarr = new int[]{-1,1,-1,1,2,2,-2,-2};// x-axis changes (L-shape moves)
-        int[] yarr = new int[]{-2,-2,2,2,-1,1,-1,1};// y-axis changes (L-shape moves)
-
-        // Loop through all possible movement of Knight
         for (int i = 0; i < xarr.length; i++) {
-            int tx = x+xarr[i]; // x position
-            int ty = y+yarr[i]; // y position
-
-            // Check if the new position (tx, ty) is within the board bounds
+            int tx = x+xarr[i];
+            int ty = y+yarr[i];
             if(!(isInsideBoard(tx,ty))) continue;
-
-            // If the destination square is empty, add it to the list of possible moves
             if(Board[tx][ty] == null){
                 Movable.add(tx+" "+ty);
             }
-
-            // If there is an opponent's piece at the destination, add it to the Killable list
             else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
                 Killable.add(tx + " " + ty);
             }
@@ -141,22 +127,15 @@ public class Move extends Main{
     }
     void Pawn(int x, int y)
     {
-        /*
-       This function calculates the possible movements of a Pawn at position (x, y) on a chess board.
-       The Pawn's movement depends on its color:
-       - White Pawns move upwards and can capture diagonally.
-       - Black Pawns move downwards and can capture diagonally.
-        */
-
-        // Arrays representing the movement vectors for the Pawn based on its color.
-        // White Pawns move up the board, Black Pawns move down the board.
-        int[] xarr;int[] yarr;
+        int[] xarr;int[] yarr;int enpassant;
         if(Board[x][y].isWhitePiece){
-            xarr = new int[]{-1,-2,-1};// White Pawn movement (upwards)
+            xarr = new int[]{-1,-2,-1};
+            enpassant = 3;
         }else{
-            xarr = new int[]{1,2,1};// Black Pawn movement (downwards)
+            xarr = new int[]{1,2,1};
+            enpassant = 4;
         }
-        yarr = new int[]{0,0,-1,1};// Pawns can capture diagonally
+        yarr = new int[]{0,0,-1,1};
 
         if(isInsideBoard(x+xarr[0],y+yarr[0]) && Board[x+xarr[0]][y+yarr[0]] == null){
             Movable.add((x+xarr[0])+" "+(y+yarr[0]));
@@ -172,5 +151,15 @@ public class Move extends Main{
             Killable.add((x+xarr[2])+" "+(y+yarr[3]));
         }
 
+        if(x==enpassant){
+            if(isInsideBoard(enpassant,y-1) && Board[enpassant][y-1]!=null && Board[enpassant][y-1].EnPasant)
+            {
+                Enpassant.add((enpassant+xarr[0])+" "+(y-1));
+            }
+            if(isInsideBoard(enpassant,y+1) && Board[enpassant][y+1]!=null && Board[enpassant][y+1].EnPasant)
+            {
+                Enpassant.add((enpassant+xarr[0])+" "+(y+1));
+            }
+        }
     }
 }
