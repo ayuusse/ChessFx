@@ -22,8 +22,8 @@ public class KingMoves extends Main {
                 Killable.add(tx + " " + ty);
             }
         }
-        //Castling code
-        if(Board[x][y].isFirstMove){
+
+        if(Board[x][y].isFirstMove && InCheckMoves.isEmpty()){
             int X;
             if(Board[x][y].isWhitePiece){
                 X = 7;
@@ -32,7 +32,7 @@ public class KingMoves extends Main {
             }
             int[] Left = new int[]{3,2,1};
             int[] Right = new int[]{6,5};
-            //Check if we can Castle to the left
+
             if(Board[X][0].isFirstMove){
                 boolean canCastle = true;
                 for(int Y : Left){
@@ -45,7 +45,6 @@ public class KingMoves extends Main {
                     Castling.add(X+" "+2);
                 }
             }
-            //Check if we can Castle to the Right
             if(Board[X][7].isFirstMove){
                 boolean canCastle = true;
                 for(int Y : Right){

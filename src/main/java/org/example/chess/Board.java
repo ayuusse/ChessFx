@@ -20,6 +20,4 @@ public class Board {
     Boolean CantMove(){
         return CantMove;
     }
-    Boolean getIsFirstMove(){return isFirstMove;}
-    Boolean Enpassant(){return EnPasant;}
 }

@@ -10,20 +10,20 @@ import java.util.ArrayList;
 
 /*
         Hi, Thank you for reading this  (´▽`ʃ♡ƪ)
-        Btw I am not very good at writing comments as you can see.
  */
 public class Main extends Application {
     Images Image = new Images();
-    static  Board[][] Board = new Board[8][8]; //The main array
+    static  Board[][] Board = new Board[8][8];
 
     AnchorPane Pane = new AnchorPane();
-    ImageView[][] Pices = new ImageView[8][8];//Image array to show the image of Pieces
-    ImageView[][] MoveKill = new ImageView[8][8];//Image array that shows the images of places the pieces can move and whom they can kill
+    ImageView[][] Pices = new ImageView[8][8];
+    ImageView[][] MoveKill = new ImageView[8][8];
 
-    static ArrayList<String> Movable = new ArrayList<>();//Stores all the valid moves
-    static ArrayList<String> Killable = new ArrayList<>();//Stores all the valid Kill moves
+    static ArrayList<String> Movable = new ArrayList<>();
+    static ArrayList<String> Killable = new ArrayList<>();
     static ArrayList<String> Castling = new ArrayList<>();
     static ArrayList<String> Enpassant = new ArrayList<>();
+    static ArrayList<String> InCheckMoves = new ArrayList<>();
 
     int Oldx,Oldy;
     boolean isWhiteToMove = true,isDragging = false;
@@ -31,11 +31,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-         /*
-            Start method
-         */
+
         Scene scene = new Scene(Pane, 800, 800);
         Initalize();
+
         scene.setOnMouseDragged(event ->{
             if(isDragging) {
                 Dragimg.setX(event.getX()-50);
@@ -59,11 +58,13 @@ public class Main extends Application {
                 isDragging = true;
             }
         });
+
         scene.setOnMouseReleased(event ->{
             Dragimg.setImage(null);
             isDragging = false;
             SyncBoard();
         });
+
         scene.setOnMouseClicked(event ->{
             int x =(int)event.getSceneY()/100;
             int y =(int)event.getSceneX()/100;
@@ -77,7 +78,6 @@ public class Main extends Application {
             if (x>7 || x<0 || y>7 || y<0) return;
             if(Board[x][y] == null){
                 SetMoveKillnull();
-                System.out.println("Clicked null");
                 return;
             }
             if(isWhiteToMove != Board[x][y].isWhitePiece) return;
@@ -148,6 +148,28 @@ public class Main extends Application {
         }
         SyncBoard();
         isWhiteToMove = !isWhiteToMove;
+        isInCheck(isWhiteToMove);
+    }
+
+
+
+    private void isInCheck(boolean isWhite) {
+        InCheckMoves= new ArrayList<>();
+        CheckMoves CheckMoves = new CheckMoves();
+        for(int i=0 ; i < Board.length ; i++){
+            for (int j = 0; j < Board[0].length; j++) {
+                if(Board[i][j] == null || Board[i][j].isWhitePiece == isWhite ) continue;
+                switch ((Board[i][j].Name).substring(0,3)){
+                    case "Roo" ->{CheckMoves.Rook(i,j);}
+                    case "Bis" ->{CheckMoves.Bishop(i,j);}
+                    case "Que" ->{CheckMoves.Queen(i,j);}
+                    case "Paw" ->{CheckMoves.Pawn(i,j);}
+                    case "Kni" ->{CheckMoves.Knight(i,j);}
+                    case "Kin" ->{}
+                    default -> System.out.println("Error Checks");
+                }
+            }
+        }
     }
 
     private void setMovement(int x, int y) {
@@ -164,6 +186,11 @@ public class Main extends Application {
             case "Kin" ->  KingMoves.Kingmove(x,y);
             case "Kni" ->  Move.Knight(x,y);
             default -> System.out.println("Error When Getting Moves");
+        }
+        if(!InCheckMoves.isEmpty() && !(Board[x][y].Name.startsWith("Kin")))
+        {
+            Movable.retainAll(InCheckMoves);
+            Killable.retainAll(InCheckMoves);
         }
         showMoves();
     }
@@ -184,18 +211,12 @@ public class Main extends Application {
     }
 
     private void Initalize() {
-         /*
-            Just a method to keep things organaized
-         */
         SetBoard();
         SetMoveKillnull();
         SyncBoard();
     }
 
     private void SetMoveKillnull() {
-        /*
-            Sets the images of MoveKill to null
-         */
         Movable = new ArrayList<>();
         Killable = new ArrayList<>();
         Castling = new ArrayList<>();
@@ -208,9 +229,6 @@ public class Main extends Application {
     }
 
     private void SyncBoard() {
-        /*
-            This method syncs the Board Array and the Pieces Array
-         */
         for (int i = 0; i < Pices.length; i++) {
             for (int j = 0; j < Pices[0].length; j++) {
                 Pices[i][j].setImage(null);
@@ -233,16 +251,11 @@ public class Main extends Application {
     }
 
     private void SetBoard() {
-        /*
-            Setting Up the Board
-         */
-
-        //Adding the Background image of the Chess Board
         ImageView BoardImg = new ImageView(Image.Board);
         BoardImg.toBack();
         Pane.getChildren().addAll(BoardImg);
 
-        //Just Setting up the Pices array
+
         for (int i = 0; i < Pices.length; i++) {
             for (int j = 0; j < Pices[0].length; j++) {
                 Pices[i][j] = new ImageView();
@@ -264,7 +277,6 @@ public class Main extends Application {
         Dragimg = new ImageView();
         Pane.getChildren().addAll(Dragimg);
 
-        //Placing the Pices at the correct place
         Board[0][0] = new Board("Rook",false,true);
         Board[0][1] = new Board("Knight",false,true);
         Board[0][2] = new Board("Bishop",false,true);
@@ -286,7 +298,7 @@ public class Main extends Application {
         Board[7][1] = new Board("Knight",true,true);
         Board[7][2] = new Board("Bishop",true,true);
         Board[7][3] = new Board("Queen",true,true);
-        Board[7][4] = new Board("King",true,true);
+        Board[5][4] = new Board("King",true,true);
         Board[7][5] = new Board("Bishop",true,true);
         Board[7][6] = new Board("Knight",true,true);
         Board[7][7] = new Board("Rook",true,true);
