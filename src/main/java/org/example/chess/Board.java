@@ -1,23 +1,16 @@
 package org.example.chess;
 
+import java.util.ArrayList;
+
 public class Board {
-    String Name;Boolean isWhitePiece;Boolean isFirstMove;Boolean CantMove;
-    Boolean EnPasant;
+    String Name;Boolean isWhitePiece;Boolean isFirstMove;
 
     Board(String Name,Boolean isWhitePiece,Boolean isFirstMove){
         this.Name = Name;
         this.isWhitePiece = isWhitePiece;
         this.isFirstMove = isFirstMove;
-        this.CantMove = false;
-        this.EnPasant = false;
     }
-    String getName(){
-        return Name;
-    }
-    Boolean isWhitePiece(){
-        return isWhitePiece;
-    }
-    Boolean CantMove(){
-        return CantMove;
-    }
+
+    Boolean EnPasant = false;
+    ArrayList<String> Check_MovesAvailableUnderCheck = new ArrayList<>();
 }

@@ -29,6 +29,11 @@ public class Move extends Main{
                 }
             }
         }
+        if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
+        {
+            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+        }
     }
     void Bishop(int x, int y)
     {
@@ -49,6 +54,11 @@ public class Move extends Main{
                     break;
                 }
             }
+        }
+        if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
+        {
+            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
     void Queen(int x, int y)
@@ -71,6 +81,11 @@ public class Move extends Main{
                 }
             }
         }
+        if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
+        {
+            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+        }
     }
 
     void Knight(int x, int y)
@@ -88,6 +103,11 @@ public class Move extends Main{
             else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
                 Killable.add(tx + " " + ty);
             }
+        }
+        if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
+        {
+            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
     void Pawn(int x, int y)
@@ -125,6 +145,12 @@ public class Move extends Main{
             {
                 Enpassant.add((enpassant+xarr[0])+" "+(y+1));
             }
+        }
+
+        if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
+        {
+            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
 }
