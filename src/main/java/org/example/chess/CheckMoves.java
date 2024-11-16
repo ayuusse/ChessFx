@@ -38,7 +38,7 @@ public class CheckMoves extends Main {
                 {
                     if(pieceinway != null)
                     {
-                        return;
+                        break;
                     }
                     pieceinway = tx+" "+ty;
                 }
@@ -80,7 +80,7 @@ public class CheckMoves extends Main {
                 {
                     if(pieceinway != null)
                     {
-                        return;
+                        break;
                     }
                     pieceinway = tx+" "+ty;
                 }
@@ -107,7 +107,6 @@ public class CheckMoves extends Main {
                 if(Board[tx][ty] == null){
                     temp.add(tx+" "+ty);
                 } else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece && Board[tx][ty].Name.startsWith("Kin")) {
-                    System.out.println("INCHECK");
                     temp.add(x+" "+y);
                     if(pieceinway != null)
                     {
@@ -123,7 +122,7 @@ public class CheckMoves extends Main {
                 {
                     if(pieceinway != null)
                     {
-                        return;
+                        break;
                     }
                     pieceinway = tx+" "+ty;
                 }

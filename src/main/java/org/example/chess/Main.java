@@ -164,6 +164,8 @@ public class Main extends Application {
 
 
     private void isInCheck(boolean isWhite) {
+        Movable = new ArrayList<>();
+        Killable = new ArrayList<>();
         InCheckMoves = new ArrayList<>();
         CheckMoves CheckMoves = new CheckMoves();
         for(int i=0 ; i < Board.length ; i++){
@@ -182,25 +184,36 @@ public class Main extends Application {
         }
         if(!InCheckMoves.isEmpty())
         {
-//            isCheckmate(isWhite);
+            isCheckmate(isWhite);
         }
     }
-//    private void isCheckmate(boolean isWhite) {
-//        for(int i=0 ; i < Board.length ; i++){
-//            for (int j = 0; j < Board[0].length; j++) {
-//                if(Board[i][j] == null || Board[i][j].isWhitePiece != isWhite ) continue;
-//                switch ((Board[i][j].Name).substring(0,3)){
-//                    case "Roo" ->{CheckMoves.Rook(i,j);}
-//                    case "Bis" ->{CheckMoves.Bishop(i,j);}
-//                    case "Que" ->{CheckMoves.Queen(i,j);}
-//                    case "Paw" ->{CheckMoves.Pawn(i,j);}
-//                    case "Kni" ->{CheckMoves.Knight(i,j);}
-//                    case "Kin" ->{}
-//                    default -> System.out.println("Error Checks");
-//                }
-//            }
-//        }
-//    }
+    private void isCheckmate(boolean isWhite) {
+        Move Move = new Move();
+        KingMoves KingMoves = new KingMoves();
+        for(int i=0 ; i < Board.length ; i++){
+            for (int j = 0; j < Board[0].length; j++) {
+                if(Board[i][j] == null || Board[i][j].isWhitePiece != isWhite ) continue;
+                Movable = new ArrayList<>();
+                Killable = new ArrayList<>();
+                switch ((Board[i][j].Name).substring(0,3)){
+                    case "Roo" -> Move.Rook(i,j);
+                    case "Bis" ->Move.Bishop(i,j);
+                    case "Que" ->Move.Queen(i,j);
+                    case "Paw" ->Move.Pawn(i,j);
+                    case "Kin" ->KingMoves.Kingmove(i,j);
+                    case "Kni" ->Move.Knight(i,j);
+                    default -> System.out.println("Error Checks");
+                }
+                Movable.retainAll(InCheckMoves);
+                Killable.retainAll(InCheckMoves);
+                if(Movable.isEmpty() && Killable.isEmpty())
+                {
+                    System.out.println("------------------------------------------------------ GAME OVER ------------------------------------------------------");
+                    return;
+                }
+            }
+        }
+    }
     private void setMovement(int x, int y) {
         Movable = new ArrayList<>();
         Killable = new ArrayList<>();
@@ -309,7 +322,7 @@ public class Main extends Application {
         Board[0][0] = new Board("Rook",false,true);
         Board[0][1] = new Board("Knight",false,true);
         Board[0][2] = new Board("Bishop",false,true);
-        Board[2][4] = new Board("Queen",false,true);
+        Board[0][3] = new Board("Queen",false,true);
         Board[0][4] = new Board("King",false,true);
         Board[0][5] = new Board("Bishop",false,true);
         Board[0][6] = new Board("Knight",false,true);
@@ -327,10 +340,10 @@ public class Main extends Application {
         Board[7][1] = new Board("Knight",true,true);
         Board[7][2] = new Board("Bishop",true,true);
         Board[7][3] = new Board("Queen",true,true);
-        Board[5][4] = new Board("King",true,true);
+        Board[7][4] = new Board("King",true,true);
         Board[7][5] = new Board("Bishop",true,true);
         Board[7][6] = new Board("Knight",true,true);
-        Board[4][4] = new Board("Rook",true,true);
+        Board[7][7] = new Board("Rook",true,true);
         Board[6][0] = new Board("Pawn",true,true);
         Board[6][1] = new Board("Pawn",true,true);
         Board[6][2] = new Board("Pawn",true,true);

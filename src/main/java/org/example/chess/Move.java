@@ -1,6 +1,5 @@
 package org.example.chess;
 
-import java.util.HashSet;
 
 public class Move extends Main{
     boolean isInsideBoard(int x,int y){
@@ -61,7 +60,7 @@ public class Move extends Main{
             Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
-    void Queen(int x, int y)
+    boolean Queen(int x, int y)
     {
         int[] xarr = new int[]{-1,1,0,0,-1,1,1,-1};
         int[] yarr = new int[]{0,0,-1,1,-1,1,-1,1};
@@ -86,6 +85,7 @@ public class Move extends Main{
             Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
             Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
+        return !Movable.isEmpty() || !Killable.isEmpty();
     }
 
     void Knight(int x, int y)
