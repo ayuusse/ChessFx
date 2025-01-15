@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -12,95 +13,108 @@ import java.util.ArrayList;
         Hi, Thank you for reading this  (´▽`ʃ♡ƪ)
  */
 public class Main extends Application {
-    Images Image = new Images();
-    static  Board[][] Board = new Board[8][8];
+    Images Image;
+    Timer Timer;
+    CheckMoves CheckMoves;
+    King_Movement KingMoves;
+    Piece_Movement Move;
+    static Board[][] Board = new Board[8][8];
 
     AnchorPane Pane = new AnchorPane();
-    ImageView[][] Pices = new ImageView[8][8];
-    ImageView[][] MoveKill = new ImageView[8][8];
 
-    static ArrayList<String> Movable = new ArrayList<>();
-    static ArrayList<String> Killable = new ArrayList<>();
-    static ArrayList<String> Castling = new ArrayList<>();
-    static ArrayList<String> Enpassant = new ArrayList<>();
-    static ArrayList<String> InCheckMoves = new ArrayList<>();
+    ImageView[][] Pices_ImageView = new ImageView[8][8];
+    ImageView[][] Movable_Killable_ImageView = new ImageView[8][8];
 
-    int Oldx,Oldy;
+    static ArrayList<String> Valid_Moves = new ArrayList<>();
+    static ArrayList<String> Valid_Killable_Moves = new ArrayList<>();
+    static ArrayList<String> Valid_Castling_Moves = new ArrayList<>();
+    static ArrayList<String> Valid_Enpassant_Moves = new ArrayList<>();
+    static ArrayList<String> Valid_Moves_UnderCheck = new ArrayList<>();
+
     boolean isWhiteToMove = true,isDragging = false;
-    ImageView Dragimg;
+
+    int enpassant_x=-1,enpassant_y=-1,Oldx,Oldy;
+
+    ImageView Drag_ImageView;
+
+    MediaPlayer KillSound,MoveSound;
 
     @Override
     public void start(Stage stage) {
+        Pane.setStyle("-fx-background-color: #171716;");
 
-        Scene scene = new Scene(Pane, 800, 800);
+        Scene scene = new Scene(Pane, 1200, 800);
         Initalize();
 
         scene.setOnMouseDragged(event ->{
+            if(event.getSceneX()>800) return;
             if(isDragging) {
-                Dragimg.setX(event.getX()-50);
-                Dragimg.setY(event.getY()-50);
+                Drag_ImageView.setX(event.getX()-50);
+                Drag_ImageView.setY(event.getY()-50);
             }
             else {
                 int x =(int)event.getSceneY()/100;
                 int y =(int)event.getSceneX()/100;
                 if(Board[x][y] == null){
-                    SetMoveKillnull();
+                    Set_MoveKill_null();
                     return;
                 }
                 if(isWhiteToMove != Board[x][y].isWhitePiece) return;
-                setMovement(x,y);
+                get_Moves(x,y);
                 Oldx = x;
                 Oldy = y;
-                Dragimg.setImage(Pices[x][y].getImage());
-                Pices[x][y].setImage(null);
-                Dragimg.setX(event.getX()-50);
-                Dragimg.setY(event.getY()-50);
+                Drag_ImageView.setImage(Pices_ImageView[x][y].getImage());
+                Pices_ImageView[x][y].setImage(null);
+                Drag_ImageView.setX(event.getX()-50);
+                Drag_ImageView.setY(event.getY()-50);
                 isDragging = true;
             }
         });
 
         scene.setOnMouseReleased(event ->{
-            Dragimg.setImage(null);
+            Drag_ImageView.setImage(null);
             isDragging = false;
-            SyncBoard();
+            SyncImagesOnBoard();
         });
 
         scene.setOnMouseClicked(event ->{
+            if(event.getSceneX()>800) return;
             int x =(int)event.getSceneY()/100;
             int y =(int)event.getSceneX()/100;
-            if(Movable.contains(x+" "+y)||Killable.contains(x+" "+y)||Castling.contains(x+" "+y)||Enpassant.contains(x+" "+y)){
+            if(Valid_Moves.contains(x+" "+y)|| Valid_Killable_Moves.contains(x+" "+y)|| Valid_Castling_Moves.contains(x+" "+y)|| Valid_Enpassant_Moves.contains(x+" "+y)){
                 MovePiece(x,y);
                 Oldx = -1;
                 Oldy = -1;
-                SetMoveKillnull();
+                Set_MoveKill_null();
                 return;
             }
             if (x>7 || x<0 || y>7 || y<0) return;
             if(Board[x][y] == null){
-                SetMoveKillnull();
+                Set_MoveKill_null();
                 return;
             }
             if(isWhiteToMove != Board[x][y].isWhitePiece) return;
-            setMovement(x,y);
+            get_Moves(x,y);
             Oldx = x;
             Oldy = y;
         });
 
-        stage.setTitle("Chess!");
+        Timer.addTimer(Pane);
+        Timer.StartTimer1();
+
         stage.setResizable(false);
+        stage.setTitle("Chess!");
         stage.setScene(scene);
+        stage.getIcons().add(Image.bK);
         stage.show();
-
     }
-
-    int enpassant_x=-1,enpassant_y=-1;
     private void MovePiece(int x, int y) {
         if(enpassant_x>-1 && enpassant_y>-1 && Board[enpassant_x][enpassant_y] != null)
         {
             Board[enpassant_x][enpassant_y].EnPasant = false;
             enpassant_x = -1;enpassant_y = -1;
         }
-        if(Castling.contains(x+" "+y)){
+        if(Valid_Castling_Moves.contains(x+" "+y)){
             switch (x+" "+y){
                 case "7 2"->{
                     Board[7][3] =  new Board("Rook",true,false);
@@ -127,14 +141,18 @@ public class Main extends Application {
                     Board[0][6] =  new Board("King",false,false);
                 }
             }
+            MoveSound.stop();
+            MoveSound.play();
         }
-        else if (Enpassant.contains(x + " " + y)) {
+        else if (Valid_Enpassant_Moves.contains(x + " " + y)) {
             Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false);
             if(Board[Oldx][Oldy].isWhitePiece)
                 Board[x+1][y] = null;
             else
                 Board[x-1][y] = null;
 
+            KillSound.stop();
+            KillSound.play();
             Board[Oldx][Oldy] = null;
         }
         else if((Board[Oldx][Oldy].Name).equals("Pawn") && Math.abs(x-Oldx)==2){
@@ -142,18 +160,34 @@ public class Main extends Application {
             Board[x][y].EnPasant = true;
             enpassant_x =x; enpassant_y=y;
             Board[Oldx][Oldy] = null;
+            MoveSound.stop();
+            MoveSound.play();
         }
-        else{
+        else {
+            if (Valid_Moves.contains(x + " " + y)) {
+                MoveSound.stop();
+                MoveSound.play();
+            } else {
+                KillSound.stop();
+                KillSound.play();
+            }
             Board[x][y] = new Board(Board[Oldx][Oldy].Name,Board[Oldx][Oldy].isWhitePiece,false);
             Board[Oldx][Oldy] = null;
         }
-        SyncBoard();
+        SyncImagesOnBoard();
         isWhiteToMove = !isWhiteToMove;
-        removeCheckOnlyMoves();
-        isInCheck(isWhiteToMove);
-    }
 
-    private void removeCheckOnlyMoves() {
+        if(isWhiteToMove) {
+            Timer.StartTimer1();
+            Timer.pauseTimer2();
+        }else {
+            Timer.StartTimer2();
+            Timer.pauseTimer1();
+        }
+        Remove_ValidMovesUnderCheck();
+        is_In_Check(isWhiteToMove);
+    }
+    private void Remove_ValidMovesUnderCheck() {
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null ) continue;
@@ -161,13 +195,13 @@ public class Main extends Application {
             }
         }
     }
-
-
-    private void isInCheck(boolean isWhite) {
-        Movable = new ArrayList<>();
-        Killable = new ArrayList<>();
-        InCheckMoves = new ArrayList<>();
-        CheckMoves CheckMoves = new CheckMoves();
+    public void GameOver() {
+        System.out.println("------------------------------------------------------ GAME OVER ------------------------------------------------------");
+    }
+    private void is_In_Check(boolean isWhite) {
+        Valid_Moves = new ArrayList<>();
+        Valid_Killable_Moves = new ArrayList<>();
+        Valid_Moves_UnderCheck = new ArrayList<>();
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null || Board[i][j].isWhitePiece == isWhite ) continue;
@@ -182,19 +216,15 @@ public class Main extends Application {
                 }
             }
         }
-        if(!InCheckMoves.isEmpty())
+        if(!Valid_Moves_UnderCheck.isEmpty())
         {
-            isCheckmate(isWhite);
+            is_Checkmate(isWhite);
         }
     }
-    private void isCheckmate(boolean isWhite) {
-        Move Move = new Move();
-        KingMoves KingMoves = new KingMoves();
+    private void is_Checkmate(boolean isWhite) {
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null || Board[i][j].isWhitePiece != isWhite ) continue;
-                Movable = new ArrayList<>();
-                Killable = new ArrayList<>();
                 switch ((Board[i][j].Name).substring(0,3)){
                     case "Roo" -> Move.Rook(i,j);
                     case "Bis" ->Move.Bishop(i,j);
@@ -204,22 +234,19 @@ public class Main extends Application {
                     case "Kni" ->Move.Knight(i,j);
                     default -> System.out.println("Error Checks");
                 }
-                Movable.retainAll(InCheckMoves);
-                Killable.retainAll(InCheckMoves);
-                if(Movable.isEmpty() && Killable.isEmpty())
-                {
-                    System.out.println("------------------------------------------------------ GAME OVER ------------------------------------------------------");
-                    return;
-                }
             }
         }
+        Valid_Moves.retainAll(Valid_Moves_UnderCheck);
+        Valid_Killable_Moves.retainAll(Valid_Moves_UnderCheck);
+        if(Valid_Moves.isEmpty() && Valid_Killable_Moves.isEmpty())
+        {
+            GameOver();
+        }
     }
-    private void setMovement(int x, int y) {
-        Movable = new ArrayList<>();
-        Killable = new ArrayList<>();
-        SetMoveKillnull();
-        Move Move = new Move();
-        KingMoves KingMoves = new KingMoves();
+    private void get_Moves(int x, int y) {
+        Valid_Moves = new ArrayList<>();
+        Valid_Killable_Moves = new ArrayList<>();
+        Set_MoveKill_null();
         switch ((Board[x][y].Name).substring(0,3)){
             case "Roo" ->  Move.Rook(x,y);
             case "Bis" ->  Move.Bishop(x,y);
@@ -229,95 +256,96 @@ public class Main extends Application {
             case "Kni" ->  Move.Knight(x,y);
             default -> System.out.println("Error When Getting Moves");
         }
-        if(!InCheckMoves.isEmpty() && !(Board[x][y].Name.startsWith("Kin")))
+        if(!Valid_Moves_UnderCheck.isEmpty() && !(Board[x][y].Name.startsWith("Kin")))
         {
-            Movable.retainAll(InCheckMoves);
-            Killable.retainAll(InCheckMoves);
+            Valid_Moves.retainAll(Valid_Moves_UnderCheck);
+            Valid_Killable_Moves.retainAll(Valid_Moves_UnderCheck);
         }
-        showMoves();
+        show_Moves();
     }
-
-    private void showMoves() {
-        for(String s : Movable){
-            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Move);
+    private void show_Moves() {
+        for(String s : Valid_Moves){
+            Movable_Killable_ImageView[Integer.parseInt(s.substring(0,1))][Integer.parseInt(s.substring(2,3))].setImage(Image.Move);
         }
-        for(String s : Killable){
-            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Kill);
+        for(String s : Valid_Killable_Moves){
+            Movable_Killable_ImageView[Integer.parseInt(s.substring(0,1))][Integer.parseInt(s.substring(2,3))].setImage(Image.Kill);
         }
-        for(String s : Castling){
-            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Move);
+        for(String s : Valid_Castling_Moves){
+            Movable_Killable_ImageView[Integer.parseInt(s.substring(0,1))][Integer.parseInt(s.substring(2,3))].setImage(Image.Move);
         }
-        for(String s : Enpassant){
-            MoveKill[Integer.parseInt(String.valueOf(s.charAt(0)))][Integer.parseInt(String.valueOf(s.charAt(2)))].setImage(Image.Kill);
+        for(String s : Valid_Enpassant_Moves){
+            Movable_Killable_ImageView[Integer.parseInt(s.substring(0,1))][Integer.parseInt(s.substring(2,3))].setImage(Image.Kill);
         }
     }
-
     private void Initalize() {
-        SetBoard();
-        SetMoveKillnull();
-        SyncBoard();
-    }
+        Timer = new Timer();
+        Image = new Images();
+        CheckMoves = new CheckMoves();
+        KingMoves = new King_Movement();
+        Move = new Piece_Movement();
+        KillSound = new MediaPlayer(Image.KillSound);
+        MoveSound = new MediaPlayer(Image.MoveSound);
 
-    private void SetMoveKillnull() {
-        Movable = new ArrayList<>();
-        Killable = new ArrayList<>();
-        Castling = new ArrayList<>();
-        Enpassant = new ArrayList<>();
-        for (int i = 0; i < MoveKill.length; i++) {
-            for (int j = 0; j < MoveKill[0].length; j++) {
-                MoveKill[i][j].setImage(null);
+        SetBoardToDefault();
+        Set_MoveKill_null();
+        SyncImagesOnBoard();
+    }
+    private void Set_MoveKill_null() {
+        Valid_Moves = new ArrayList<>();
+        Valid_Killable_Moves = new ArrayList<>();
+        Valid_Castling_Moves = new ArrayList<>();
+        Valid_Enpassant_Moves = new ArrayList<>();
+        for (int i = 0; i < Movable_Killable_ImageView.length; i++) {
+            for (int j = 0; j < Movable_Killable_ImageView[0].length; j++) {
+                Movable_Killable_ImageView[i][j].setImage(null);
             }
         }
     }
-
-    private void SyncBoard() {
-        for (int i = 0; i < Pices.length; i++) {
-            for (int j = 0; j < Pices[0].length; j++) {
-                Pices[i][j].setImage(null);
+    private void SyncImagesOnBoard() {
+        for (int i = 0; i < Pices_ImageView.length; i++) {
+            for (int j = 0; j < Pices_ImageView[0].length; j++) {
+                Pices_ImageView[i][j].setImage(null);
             }
         }
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
                 if(Board[i][j] == null) continue;
                 switch ((Board[i][j].Name).substring(0,3)){
-                    case "Roo" -> Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wR:Image.bR);
-                    case "Bis" ->  Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wB:Image.bB);
-                    case "Que" ->  Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wQ:Image.bQ);
-                    case "Paw" ->  Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wP:Image.bP);
-                    case "Kin" ->  Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wKn:Image.bKn);
-                    case "Kni" ->  Pices[i][j].setImage(Board[i][j].isWhitePiece?Image.wK:Image.bK);
-                    default -> System.out.println("Error When Sync Board");
+                    case "Roo" -> Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wR:Image.bR);
+                    case "Bis" ->  Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wB:Image.bB);
+                    case "Que" ->  Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wQ:Image.bQ);
+                    case "Paw" ->  Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wP:Image.bP);
+                    case "Kin" ->  Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wKn:Image.bKn);
+                    case "Kni" ->  Pices_ImageView[i][j].setImage(Board[i][j].isWhitePiece?Image.wK:Image.bK);
+                    default -> System.out.println("Error When Sync Images to Board");
                 }
             }
         }
     }
-
-    private void SetBoard() {
+    private void SetBoardToDefault() {
         ImageView BoardImg = new ImageView(Image.Board);
-        BoardImg.toBack();
-        Pane.getChildren().addAll(BoardImg);
+        Pane.getChildren().add(BoardImg);
 
-
-        for (int i = 0; i < Pices.length; i++) {
-            for (int j = 0; j < Pices[0].length; j++) {
-                Pices[i][j] = new ImageView();
-                Pices[i][j].setX(j*100);
-                Pices[i][j].setY(i*100);
-                Pane.getChildren().add(Pices[i][j]);
+        for (int i = 0; i < Pices_ImageView.length; i++) {
+            for (int j = 0; j < Pices_ImageView[0].length; j++) {
+                Pices_ImageView[i][j] = new ImageView();
+                Pices_ImageView[i][j].setX(j*100);
+                Pices_ImageView[i][j].setY(i*100);
+                Pane.getChildren().add(Pices_ImageView[i][j]);
             }
         }
 
-        for (int i = 0; i < MoveKill.length; i++) {
-            for (int j = 0; j < MoveKill[0].length; j++) {
-                MoveKill[i][j] = new ImageView();
-                MoveKill[i][j].setX(j*100);
-                MoveKill[i][j].setY(i*100);
-                Pane.getChildren().add(MoveKill[i][j]);
+        for (int i = 0; i < Movable_Killable_ImageView.length; i++) {
+            for (int j = 0; j < Movable_Killable_ImageView[0].length; j++) {
+                Movable_Killable_ImageView[i][j] = new ImageView();
+                Movable_Killable_ImageView[i][j].setX(j*100);
+                Movable_Killable_ImageView[i][j].setY(i*100);
+                Pane.getChildren().add(Movable_Killable_ImageView[i][j]);
             }
         }
 
-        Dragimg = new ImageView();
-        Pane.getChildren().addAll(Dragimg);
+        Drag_ImageView = new ImageView();
+        Pane.getChildren().add(Drag_ImageView);
 
         Board[0][0] = new Board("Rook",false,true);
         Board[0][1] = new Board("Knight",false,true);
@@ -354,8 +382,6 @@ public class Main extends Application {
         Board[6][7] = new Board("Pawn",true,true);
         System.out.println("Board set to Default");
     }
-
-
     public static void main(String[] args) {
         launch();
     }

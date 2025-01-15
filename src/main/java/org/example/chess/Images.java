@@ -1,7 +1,7 @@
 package org.example.chess;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
 
 import java.io.File;
 
@@ -22,4 +22,6 @@ public class Images {
     Image Move = new Image(new File(ImgFolder+"Move.png").toURI().toString());
     Image Kill = new Image(new File(ImgFolder+"Kill.png").toURI().toString());
     Image Board = new Image(new File(ImgFolder+"maple.jpg").toURI().toString());
+    Media KillSound = new Media(new File(ImgFolder+"KillSound.mp3").toURI().toString());
+    Media MoveSound = new Media(new File(ImgFolder+"MoveSound.mp3").toURI().toString());
 }

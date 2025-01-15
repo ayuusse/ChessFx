@@ -1,7 +1,4 @@
 /*
-        Timer
-
-
         Stockfish Maybe
  */
 

@@ -1,7 +1,7 @@
 package org.example.chess;
 
 import java.util.HashSet;
-public class KingMoves extends Main {
+public class King_Movement extends Main {
     HashSet<String> KingAttackable = new HashSet<>();
 
     boolean isInsideBoard(int x,int y){
@@ -17,13 +17,13 @@ public class KingMoves extends Main {
             int ty = y+yarr[i];
             if(!(isInsideBoard(tx,ty))) continue;
             if(Board[tx][ty] == null && !(KingAttackable.contains(tx+" "+ty))){
-                Movable.add(tx+" "+ty);
+                Valid_Moves.add(tx+" "+ty);
             } else if (!(Board[tx][ty] == null) && (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) && !(KingAttackable.contains(tx+" "+ty))) {
-                Killable.add(tx + " " + ty);
+                Valid_Killable_Moves.add(tx + " " + ty);
             }
         }
 
-        if(Board[x][y].isFirstMove && InCheckMoves.isEmpty()){
+        if(Board[x][y].isFirstMove && Valid_Moves_UnderCheck.isEmpty()){
             int X;
             if(Board[x][y].isWhitePiece){
                 X = 7;
@@ -42,7 +42,7 @@ public class KingMoves extends Main {
                     }
                 }
                 if(canCastle){
-                    Castling.add(X+" "+2);
+                    Valid_Castling_Moves.add(X+" "+2);
                 }
             }
             if(Board[X][7].isFirstMove){
@@ -54,7 +54,7 @@ public class KingMoves extends Main {
                     }
                 }
                 if(canCastle){
-                    Castling.add(X+" "+6);
+                    Valid_Castling_Moves.add(X+" "+6);
                 }
             }
         }

@@ -6,6 +6,7 @@ public class CheckMoves extends Main {
     boolean isInsideBoard(int x,int y){
         return x<8 && x>=0 && y<8 && y>=0;
     }
+
     void Rook(int x, int y)
     {
         ArrayList<String> temp = new ArrayList<>();
@@ -30,7 +31,7 @@ public class CheckMoves extends Main {
                     }
                     else
                     {
-                        InCheckMoves.addAll(temp);
+                        Valid_Moves_UnderCheck.addAll(temp);
                     }
                     return;
                 }
@@ -50,6 +51,7 @@ public class CheckMoves extends Main {
             temp.clear();
         }
     }
+
     void Bishop(int x, int y)
     {
         ArrayList<String> temp = new ArrayList<>();
@@ -72,7 +74,7 @@ public class CheckMoves extends Main {
                     }
                     else
                     {
-                        InCheckMoves.addAll(temp);
+                        Valid_Moves_UnderCheck.addAll(temp);
                     }
                     return;
                 }
@@ -92,6 +94,7 @@ public class CheckMoves extends Main {
             temp.clear();
         }
     }
+
     void Queen(int x, int y)
     {
         ArrayList<String> temp = new ArrayList<>();
@@ -114,7 +117,7 @@ public class CheckMoves extends Main {
                     }
                     else
                     {
-                        InCheckMoves.addAll(temp);
+                        Valid_Moves_UnderCheck.addAll(temp);
                     }
                     return;
                 }
@@ -134,6 +137,7 @@ public class CheckMoves extends Main {
             temp.clear();
         }
     }
+
     void Knight(int x, int y)
     {
         int[] xarr = new int[]{-1,1,-1,1,2,2,-2,-2};
@@ -144,11 +148,12 @@ public class CheckMoves extends Main {
             int ty = y+yarr[i];
             if(!(isInsideBoard(tx,ty))) continue;
             if (Board[tx][ty] != null && Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece && Board[tx][ty].Name.startsWith("Kin")) {
-                InCheckMoves.add(x+" "+y);
+                Valid_Moves_UnderCheck.add(x+" "+y);
                 return;
             }
         }
     }
+
     void Pawn(int x, int y)
     {
         int[] xarr;int[] yarr;
@@ -160,11 +165,11 @@ public class CheckMoves extends Main {
         yarr = new int[]{0,0,-1,1};
 
         if(isInsideBoard(x+xarr[2],y+yarr[2]) && Board[x+xarr[2]][y+yarr[2]] != null && (Board[x+xarr[2]][y+yarr[2]].isWhitePiece != Board[x][y].isWhitePiece)&& Board[x+xarr[2]][y+yarr[2]].Name.startsWith("Kin")){
-            InCheckMoves.add(x+" "+y);
+            Valid_Moves_UnderCheck.add(x+" "+y);
             return;
         }
         if(isInsideBoard(x+xarr[2],y+yarr[3]) && Board[x+xarr[2]][y+yarr[3]] != null && (Board[x+xarr[2]][y+yarr[3]].isWhitePiece != Board[x][y].isWhitePiece)&& Board[x+xarr[2]][y+yarr[3]].Name.startsWith("Kin")) {
-            InCheckMoves.add(x+" "+y);
+            Valid_Moves_UnderCheck.add(x+" "+y);
             return;
         }
     }

@@ -1,7 +1,7 @@
 package org.example.chess;
 
 
-public class Move extends Main{
+public class Piece_Movement extends Main{
     boolean isInsideBoard(int x,int y){
             return x<8 && x>=0 && y<8 && y>=0;
     }
@@ -17,10 +17,10 @@ public class Move extends Main{
                 ty+=yarr[i];
 
                 if(Board[tx][ty] == null){
-                    Movable.add(tx+" "+ty);
+                    Valid_Moves.add(tx+" "+ty);
                 }
                 else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
-                    Killable.add(tx+" "+ty);
+                    Valid_Killable_Moves.add(tx+" "+ty);
                     break;
                 }
                 else{
@@ -30,8 +30,8 @@ public class Move extends Main{
         }
         if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
         {
-            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
-            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Killable_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
     void Bishop(int x, int y)
@@ -45,9 +45,9 @@ public class Move extends Main{
                 tx+=xarr[i];
                 ty+=yarr[i];
                 if(Board[tx][ty] == null){
-                    Movable.add(tx+" "+ty);
+                    Valid_Moves.add(tx+" "+ty);
                 } else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
-                    Killable.add(tx+" "+ty);
+                    Valid_Killable_Moves.add(tx+" "+ty);
                     break;
                 }else{
                     break;
@@ -56,8 +56,8 @@ public class Move extends Main{
         }
         if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
         {
-            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
-            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Killable_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
     boolean Queen(int x, int y)
@@ -71,9 +71,9 @@ public class Move extends Main{
                 tx+=xarr[i];
                 ty+=yarr[i];
                 if(Board[tx][ty] == null){
-                    Movable.add(tx+" "+ty);
+                    Valid_Moves.add(tx+" "+ty);
                 } else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
-                    Killable.add(tx+" "+ty);
+                    Valid_Killable_Moves.add(tx+" "+ty);
                     break;
                 }else{
                     break;
@@ -82,10 +82,10 @@ public class Move extends Main{
         }
         if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
         {
-            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
-            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Killable_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
-        return !Movable.isEmpty() || !Killable.isEmpty();
+        return !Valid_Moves.isEmpty() || !Valid_Killable_Moves.isEmpty();
     }
 
     void Knight(int x, int y)
@@ -98,16 +98,16 @@ public class Move extends Main{
             int ty = y+yarr[i];
             if(!(isInsideBoard(tx,ty))) continue;
             if(Board[tx][ty] == null){
-                Movable.add(tx+" "+ty);
+                Valid_Moves.add(tx+" "+ty);
             }
             else if (Board[tx][ty].isWhitePiece != Board[x][y].isWhitePiece) {
-                Killable.add(tx + " " + ty);
+                Valid_Killable_Moves.add(tx + " " + ty);
             }
         }
         if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
         {
-            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
-            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Killable_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
     void Pawn(int x, int y)
@@ -123,34 +123,34 @@ public class Move extends Main{
         yarr = new int[]{0,0,-1,1};
 
         if(isInsideBoard(x+xarr[0],y+yarr[0]) && Board[x+xarr[0]][y+yarr[0]] == null){
-            Movable.add((x+xarr[0])+" "+(y+yarr[0]));
+            Valid_Moves.add((x+xarr[0])+" "+(y+yarr[0]));
             if(isInsideBoard(x+xarr[1],y+yarr[1]) && Board[x+xarr[1]][y+yarr[1]] == null && Board[x][y].isFirstMove){
-                Movable.add((x+xarr[1])+" "+(y+yarr[1]));
+                Valid_Moves.add((x+xarr[1])+" "+(y+yarr[1]));
             }
         }
 
         if(isInsideBoard(x+xarr[2],y+yarr[2]) && Board[x+xarr[2]][y+yarr[2]] != null && (Board[x+xarr[2]][y+yarr[2]].isWhitePiece != Board[x][y].isWhitePiece)){
-            Killable.add((x+xarr[2])+" "+(y+yarr[2]));
+            Valid_Killable_Moves.add((x+xarr[2])+" "+(y+yarr[2]));
         }
         if(isInsideBoard(x+xarr[2],y+yarr[3]) && Board[x+xarr[2]][y+yarr[3]] != null && (Board[x+xarr[2]][y+yarr[3]].isWhitePiece != Board[x][y].isWhitePiece)) {
-            Killable.add((x+xarr[2])+" "+(y+yarr[3]));
+            Valid_Killable_Moves.add((x+xarr[2])+" "+(y+yarr[3]));
         }
 
         if(x==enpassant){
             if(isInsideBoard(enpassant,y-1) && Board[enpassant][y-1]!=null && Board[enpassant][y-1].EnPasant)
             {
-                Enpassant.add((enpassant+xarr[0])+" "+(y-1));
+                Valid_Enpassant_Moves.add((enpassant+xarr[0])+" "+(y-1));
             }
             if(isInsideBoard(enpassant,y+1) && Board[enpassant][y+1]!=null && Board[enpassant][y+1].EnPasant)
             {
-                Enpassant.add((enpassant+xarr[0])+" "+(y+1));
+                Valid_Enpassant_Moves.add((enpassant+xarr[0])+" "+(y+1));
             }
         }
 
         if(!Board[x][y].Check_MovesAvailableUnderCheck.isEmpty())
         {
-            Movable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
-            Killable.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
+            Valid_Killable_Moves.retainAll(Board[x][y].Check_MovesAvailableUnderCheck);
         }
     }
 }
