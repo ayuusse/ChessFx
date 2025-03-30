@@ -33,7 +33,7 @@ public class King_Movement extends Main {
             int[] Left = new int[]{3,2,1};
             int[] Right = new int[]{6,5};
 
-            if(Board[X][0].isFirstMove){
+            if(Board[X][0] != null && Board[X][0].isFirstMove){
                 boolean canCastle = true;
                 for(int Y : Left){
                     if (!(Board[X][Y] == null && !(KingAttackable.contains(X + " " + Y)))) {
@@ -45,7 +45,7 @@ public class King_Movement extends Main {
                     Valid_Castling_Moves.add(X+" "+2);
                 }
             }
-            if(Board[X][7].isFirstMove){
+            if(Board[X][7] != null && Board[X][7].isFirstMove){
                 boolean canCastle = true;
                 for(int Y : Right){
                     if (!(Board[X][Y] == null && !(KingAttackable.contains(X + " " + Y)))) {
@@ -139,7 +139,7 @@ public class King_Movement extends Main {
                     KingAttackable.add(tx+" "+ty);
                     break;
                 }
-                else{
+                else if (!(Board[tx][ty].Name.equals("King"))) {
                     break;
                 }
             }
@@ -162,7 +162,7 @@ public class King_Movement extends Main {
                     KingAttackable.add(tx+" "+ty);
                     break;
                 }
-                else{
+                else if (!(Board[tx][ty].Name.equals("King"))) {
                     break;
                 }
             }
@@ -185,7 +185,7 @@ public class King_Movement extends Main {
                     KingAttackable.add(tx+" "+ty);
                     break;
                 }
-                else{
+                else if (!(Board[tx][ty].Name.equals("King"))) {
                     break;
                 }
             }

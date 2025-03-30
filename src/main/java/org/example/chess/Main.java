@@ -5,9 +5,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /*
         Hi, Thank you for reading this  (´▽`ʃ♡ƪ)
@@ -31,7 +36,7 @@ public class Main extends Application {
     static ArrayList<String> Valid_Enpassant_Moves = new ArrayList<>();
     static ArrayList<String> Valid_Moves_UnderCheck = new ArrayList<>();
 
-    boolean isWhiteToMove = true,isDragging = false;
+    boolean isWhiteToMove = true,isDragging = false,debounce = false;
 
     int enpassant_x=-1,enpassant_y=-1,Oldx,Oldy;
 
@@ -47,6 +52,8 @@ public class Main extends Application {
         Initalize();
 
         scene.setOnMouseDragged(event ->{
+            if(debounce)
+                return;
             if(event.getSceneX()>800) return;
             if(isDragging) {
                 Drag_ImageView.setX(event.getX()-50);
@@ -108,6 +115,7 @@ public class Main extends Application {
         stage.getIcons().add(Image.bK);
         stage.show();
     }
+
     private void MovePiece(int x, int y) {
         if(enpassant_x>-1 && enpassant_y>-1 && Board[enpassant_x][enpassant_y] != null)
         {
@@ -162,6 +170,42 @@ public class Main extends Application {
             Board[Oldx][Oldy] = null;
             MoveSound.stop();
             MoveSound.play();
+        }else if((Board[Oldx][Oldy].Name).equals("Pawn") && x == 7 || x == 0){
+            debounce = true;
+            Popup popup = new Popup();
+            VBox choiceBox = new VBox();
+            choiceBox.setStyle(
+                    "-fx-background-color: #f4f4f4;" +  // Light grey background
+                            "-fx-border-color: #333;" +        // Dark grey border for contrast
+                            "-fx-border-width: 8px;" +         // Slightly thinner border for a refined look
+                            "-fx-border-radius: 6px;" +       // Rounded corners
+                            "-fx-background-radius: 10px;" +   // Match background radius
+                            "-fx-padding: 10px;" +             // Space inside the box for better aesthetics
+                            "-fx-spacing: 8px;" +              // Space between elements inside VBox
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);" // Soft shadow
+            );
+
+            HashMap<ImageView,String> map = new HashMap<>();
+            map.put(new ImageView(Board[Oldx][Oldy].isWhitePiece ? Image.wQ : Image.bQ), "Queen");
+            map.put(new ImageView(Board[Oldx][Oldy].isWhitePiece ? Image.wR : Image.bR), "Rook");
+            map.put(new ImageView(Board[Oldx][Oldy].isWhitePiece ? Image.wB : Image.bB), "Bishop");
+            map.put(new ImageView(Board[Oldx][Oldy].isWhitePiece ? Image.wK : Image.bK), "Knight");
+            Boolean isWhitePiece = Board[Oldx][Oldy].isWhitePiece;
+            Board[Oldx][Oldy] = null;
+            for (Map.Entry<ImageView,String> entry : map.entrySet()) {
+                entry.getKey().setOnMouseClicked(e -> {
+                    Board[x][y] = new Board(entry.getValue(),isWhitePiece,false);
+                    MoveSound.stop();
+                    MoveSound.play();
+                    popup.hide();
+                    debounce = false;
+                    SyncImagesOnBoard();
+                });
+                choiceBox.getChildren().add(entry.getKey());
+            }
+            popup.getContent().add(choiceBox);
+            Point point = MouseInfo.getPointerInfo().getLocation();
+            popup.show(Pane, point.x - 50, point.y - 200);
         }
         else {
             if (Valid_Moves.contains(x + " " + y)) {
@@ -187,6 +231,8 @@ public class Main extends Application {
         Remove_ValidMovesUnderCheck();
         is_In_Check(isWhiteToMove);
     }
+
+
     private void Remove_ValidMovesUnderCheck() {
         for(int i=0 ; i < Board.length ; i++){
             for (int j = 0; j < Board[0].length; j++) {
@@ -197,6 +243,11 @@ public class Main extends Application {
     }
     public void GameOver() {
         System.out.println("------------------------------------------------------ GAME OVER ------------------------------------------------------");
+        Timer.pauseTimer2();
+        Timer.pauseTimer1();
+        Timer.T1_Label.setText("--:--:--");
+        Timer.T2_Label.setText("--:--:--");
+        debounce = true;
     }
     private void is_In_Check(boolean isWhite) {
         Valid_Moves = new ArrayList<>();
@@ -363,7 +414,7 @@ public class Main extends Application {
         Board[1][5] = new Board("Pawn",false,true);
         Board[1][6] = new Board("Pawn",false,true);
         Board[1][7] = new Board("Pawn",false,true);
-
+//
         Board[7][0] = new Board("Rook",true,true);
         Board[7][1] = new Board("Knight",true,true);
         Board[7][2] = new Board("Bishop",true,true);
